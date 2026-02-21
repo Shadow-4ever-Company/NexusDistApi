@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 public class ResourceServerConfig {
@@ -18,8 +19,10 @@ public class ResourceServerConfig {
          */
         @Bean
         @Order(3)
-        SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http) throws Exception {
+        SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http,
+                        CorsConfigurationSource corsConfigurationSource) throws Exception {
                 http
+                                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                                 .csrf(csrf -> csrf.disable())
                                 .sessionManagement(
                                                 session -> session
@@ -42,13 +45,16 @@ public class ResourceServerConfig {
 
         @Bean
         @Order(2)
-        SecurityFilterChain authLoginSecurityFilterChain(HttpSecurity http) throws Exception {
+        SecurityFilterChain authLoginSecurityFilterChain(HttpSecurity http,
+                        CorsConfigurationSource corsConfigurationSource) throws Exception {
                 http
+                                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                                 .securityMatcher("/auth/**")
                                 .csrf(csrf -> csrf.disable())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers(HttpMethod.OPTIONS, "/auth/**").permitAll()
                                                 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                                                 .anyRequest().denyAll());
                 return http.build();
@@ -56,8 +62,10 @@ public class ResourceServerConfig {
 
         @Bean
         @Order(2)
-        SecurityFilterChain usersSecurityFilterChain(HttpSecurity http) throws Exception {
+        SecurityFilterChain usersSecurityFilterChain(HttpSecurity http,
+                        CorsConfigurationSource corsConfigurationSource) throws Exception {
                 http
+                                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                                 .securityMatcher("/users", "/users/")
                                 .csrf(csrf -> csrf.disable())
                                 .sessionManagement(session -> session
