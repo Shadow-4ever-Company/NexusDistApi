@@ -55,7 +55,7 @@ public class ResourceServerConfig {
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(HttpMethod.OPTIONS, "/auth/**").permitAll()
-                                                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/login/").permitAll()
                                                 .anyRequest().denyAll());
                 return http.build();
         }
